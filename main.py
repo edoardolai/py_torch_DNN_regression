@@ -58,11 +58,10 @@ checkpoint_path = "best_model_checkpoint.pth"
 
 # Train Model
 train_model(model, train_loader, criterion, optimizer,scheduler, checkpoint_path, num_epochs=300, device=device)
-
 # Evaluate Model
-loss, mae, r2 = evaluate_model(model, test_loader, criterion, device,checkpoint_path)
+loss, mae, r2,mape,smape,rmse = evaluate_model(model, test_loader, criterion, device,checkpoint_path)
 
-print(f"Final Test -> Loss: {loss:.4f}, MAE: {mae:.4f}, R²: {r2:.4f}")
+print(f"Final Test -> Loss: {loss:.4f}, MAE: {mae:.4f}, R²: {r2:.4f}, RMSE: {rmse:.4f}, MAPE: {mape:.4f}, sMAPE: {smape:.4f}"    )
 
 # SHAP Explanation
 def model_predict(data):

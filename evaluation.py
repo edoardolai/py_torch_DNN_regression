@@ -1,8 +1,9 @@
 # evaluation.py
 
 import torch
-from torchmetrics.regression import R2Score, MeanAbsoluteError
+from torchmetrics.regression import R2Score, MeanAbsoluteError,MeanSquaredError,MeanAbsolutePercentageError
 from typing import Tuple
+import math
 import os 
 
 def evaluate_model(model: torch.nn.Module, test_loader: torch.utils.data.DataLoader, criterion: torch.nn.Module,
@@ -18,6 +19,9 @@ def evaluate_model(model: torch.nn.Module, test_loader: torch.utils.data.DataLoa
     epoch_loss = 0
     r2_score = R2Score().to(device)
     mae = MeanAbsoluteError().to(device)
+    mse = MeanSquaredError().to(device)
+    mape = MeanAbsolutePercentageError().to(device)
+
     
     with torch.no_grad():
         for batch_X, dist_ids, prop_ids, batch_y in test_loader:
@@ -29,9 +33,14 @@ def evaluate_model(model: torch.nn.Module, test_loader: torch.utils.data.DataLoa
             epoch_loss += loss.item()
             r2_score.update(outputs, batch_y)
             mae.update(outputs, batch_y)
+            mse.update(outputs,batch_y)
+            mape.update(outputs,batch_y)
     
     avg_loss = epoch_loss / len(test_loader)
     avg_r2 = r2_score.compute().item()
     avg_mae = mae.compute().item()
+    avg_mape = mape.compute().item()
+    avg_smape = mape.compute().item() ** 2
+    avg_rmse = math.sqrt(mse.compute().item())
 
-    return avg_loss, avg_mae, avg_r2
+    return avg_loss, avg_mae, avg_r2,avg_mape,avg_smape,avg_rmse
