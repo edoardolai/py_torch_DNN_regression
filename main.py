@@ -30,6 +30,8 @@ for col in new_num:
     X_train[col] = scaler.transform(X_train[[col]])
     X_test[col] = scaler.transform(X_test[[col]])
 
+
+
 X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
 
@@ -51,7 +53,7 @@ model = NeuralNetwork(numeric_input_dim=len(numeric_cols), num_districts=len(df[
                       property_emb_dim=8).to(device)
 
 # Optimizer and loss function
-optimizer = optim.AdamW(model.parameters(), lr=0.0045, weight_decay=0.0001)
+optimizer = optim.AdamW(model.parameters(), lr=0.002, weight_decay=0.00001)
 criterion = torch.nn.SmoothL1Loss()
 scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=10, factor=0.5)
 checkpoint_path = "best_model_checkpoint.pth"

@@ -5,7 +5,7 @@ import torch.nn as nn
 
 class NeuralNetwork(nn.Module):
     def __init__(self, numeric_input_dim: int, num_districts: int, district_emb_dim: int, 
-                 num_properties: int, property_emb_dim: int, out_features: int = 1, dropout_rate: float = 0.1):
+                 num_properties: int, property_emb_dim: int, out_features: int = 1, dropout_rate: float = 0.12):
         """
         Initializes the neural network model, including embedding layers for district and property type.
         """
@@ -15,7 +15,12 @@ class NeuralNetwork(nn.Module):
 
         total_input_dim = numeric_input_dim + district_emb_dim + property_emb_dim
         self.model = nn.Sequential(
-            nn.Linear(total_input_dim, 128),
+            nn.Linear(total_input_dim, 256),
+            nn.BatchNorm1d(256),
+            nn.LeakyReLU(),
+            nn.Dropout(dropout_rate),
+
+            nn.Linear(256, 128),
             nn.BatchNorm1d(128),
             nn.LeakyReLU(),
             nn.Dropout(dropout_rate),
@@ -24,20 +29,15 @@ class NeuralNetwork(nn.Module):
             nn.BatchNorm1d(64),
             nn.LeakyReLU(),
             nn.Dropout(dropout_rate),
-
             nn.Linear(64, 32),
             nn.BatchNorm1d(32),
             nn.LeakyReLU(),
             nn.Dropout(dropout_rate),
+
             nn.Linear(32, 32),
             nn.BatchNorm1d(32),
             nn.LeakyReLU(),
             nn.Dropout(dropout_rate),
-
-            nn.Linear(32, 32),
-            nn.BatchNorm1d(32),
-            nn.LeakyReLU(),
-
             nn.Linear(32, out_features)
         )
 

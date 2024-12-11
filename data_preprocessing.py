@@ -68,40 +68,6 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     ]
 
     df["province"] = np.select(conditions, provinces, default='Other')
-    #source https://price.immoweb.be/fr
-    prix_m2_app={
-        'Flandre_Orientale_province': 2864,
-        'Anvers_province': 2789,
-        'Bruxelles_province': 3401 ,
-        'Liège_province': 2214,
-        'Brabant_Flamand_province': 3197,
-        'Hainaut_province': 1854,
-        'Brabant_Wallon_province': 3156,
-        'Luxembourg_province': 2395,
-        'Limbourg_province': 2488 ,
-        'Namur_province': 2543,
-        'Flandre_Occidentale_province': 3759
-    }
-    prix_m2_house={
-        'Flandre_Orientale_province': 2229,
-        'Anvers_province': 2365,
-        'Bruxelles_province': 3245 ,
-        'Liège_province': 1684,
-        'Brabant_Flamand_province': 2484,
-        'Hainaut_province': 1382,
-        'Brabant_Wallon_province': 2302,
-        'Luxembourg_province': 1574,
-        'Limbourg_province': 1898 ,
-        'Namur_province': 1625,
-        'Flandre_Occidentale_province': 2017
-    }
-
-    df['price_m2_province'] = df.apply(
-        lambda x: prix_m2_house[x['province']] if x['HOUSE'] == 1 else prix_m2_app[x['province']],
-        axis=1
-    )
-    # For apartments, fill surface_of_the_plot with 0
-    df.loc[df["APARTMENT"] == 1, "surface_of_the_plot"] = df.loc[df["APARTMENT"] == 1, "surface_of_the_plot"].fillna(0)
 
     # Remove outliers for price on the combined dataset
     df = remove_outliers(df.copy(), ['price','living_area','surface_of_the_plot'])
