@@ -1,18 +1,24 @@
-# Immo-Eliza Regression
+# pytorch_DNN_regression
 
 This project is a regression model aimed at predicting apartment and house prices based on various features. The model uses a deep learning approach, specifically a neural network, to make predictions. The project processes a dataset consisting of real estate listings, performs data preprocessing, and trains a neural network model to predict the price of properties.
 
 ## Project Structure
-immo_eliza_regression/ <br>
-├── main.py                 # The entry point for training and testing the model <br>
-├── data_preprocessing.py   # Handles data loading, cleaning, and feature engineering <br>
-├── model.py                # Contains the model architecture (Neural Network) <br>
-├── training.py             # Handles the training loop <br>
-├── evaluation.py           # Handles evaluation of the trained model on the test set <br>
-├── requirements.txt        # Python dependencies for the project <br>
-└── data/ <br>
-    ├── houses.csv          # Dataset of house listings <br>
-    └── apartments.csv      # Dataset of apartment listings <br>
+pytorch_DNN_regression/
+├── artifacts/
+│   └── encoders/
+│       ├── district_encoder.joblib
+│       └── property_sub_type.joblib
+├── data/
+│   ├── processed/
+│   │   └── properties.csv
+│   └── raw/
+│       └── properties.csv
+├── src/
+│   ├── __init__.py
+│   ├── data_preprocessing.py
+│   └── model.py
+├── main.py
+└── requirements.txt
 
 ## Prerequisites
 
