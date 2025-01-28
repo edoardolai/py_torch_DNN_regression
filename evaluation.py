@@ -1,5 +1,3 @@
-# evaluation.py
-
 import torch
 from torchmetrics.regression import R2Score, MeanAbsoluteError,MeanSquaredError,MeanAbsolutePercentageError
 from typing import Tuple
@@ -16,7 +14,7 @@ def evaluate_model(model: torch.nn.Module, test_loader: torch.utils.data.DataLoa
         model.load_state_dict(checkpoint['model_state'])
     print("Best model loaded.")
     model.eval()
-    epoch_loss = 0
+    test_loss = 0
     r2_score = R2Score().to(device)
     mae = MeanAbsoluteError().to(device)
     mse = MeanSquaredError().to(device)
@@ -24,19 +22,19 @@ def evaluate_model(model: torch.nn.Module, test_loader: torch.utils.data.DataLoa
 
     
     with torch.no_grad():
-        for batch_X, dist_ids, prop_ids, batch_y in test_loader:
-            batch_X, dist_ids, prop_ids, batch_y = batch_X.to(device), dist_ids.to(device), prop_ids.to(device), batch_y.to(device).unsqueeze(1)
+        for batch_X_num, batch_X_cat, dist_ids, prop_ids, batch_y in test_loader:
+            batch_X_num, batch_X_cat, dist_ids, prop_ids, batch_y = batch_X_num.to(device), batch_X_cat.to(device), dist_ids.to(device), prop_ids.to(device), batch_y.to(device).unsqueeze(1)
             
-            outputs = model(batch_X, dist_ids, prop_ids)
+            outputs = model(batch_X_num,batch_X_cat, dist_ids, prop_ids)
             loss = criterion(outputs, batch_y)
             
-            epoch_loss += loss.item()
+            test_loss += loss.item()
             r2_score.update(outputs, batch_y)
             mae.update(outputs, batch_y)
             mse.update(outputs,batch_y)
             mape.update(outputs,batch_y)
     
-    avg_loss = epoch_loss / len(test_loader)
+    avg_loss = test_loss / len(test_loader)
     avg_r2 = r2_score.compute().item()
     avg_mae = mae.compute().item()
     avg_mape = mape.compute().item()

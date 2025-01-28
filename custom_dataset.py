@@ -15,6 +15,7 @@ class CustomDataset(Dataset):
         - cat_cols: List of column names for categorical features.
         """
         self.X_numeric = torch.tensor(X[numeric_cols].values, dtype=torch.float32)
+        self.X_categorical = torch.tensor(X[cat_cols].values, dtype=torch.float32)
         self.X_district = torch.tensor(X['district_id'].values, dtype=torch.long)
         self.X_property = torch.tensor(X['property_sub_type_id'].values, dtype=torch.long)
         self.y = torch.tensor(y.values, dtype=torch.float32)
@@ -25,7 +26,7 @@ class CustomDataset(Dataset):
         """
         return len(self.y)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor,torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Retrieves a sample from the dataset.
         
@@ -35,4 +36,4 @@ class CustomDataset(Dataset):
         Returns:
         - A tuple containing the numeric features, district IDs, property type IDs, and the target value.
         """
-        return self.X_numeric[idx], self.X_district[idx], self.X_property[idx], self.y[idx]
+        return self.X_numeric[idx],self.X_categorical[idx], self.X_district[idx], self.X_property[idx], self.y[idx]
