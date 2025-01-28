@@ -4,11 +4,11 @@ import torch
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-from data_preprocessing import load_data, preprocess_data, split_data
-from model import NeuralNetwork
-from custom_dataset import CustomDataset
-from training import train_model
-from evaluation import evaluate_model
+from src.data_preprocessing import load_data, preprocess_data, split_data
+from src.model import NeuralNetwork
+from src.custom_dataset import CustomDataset
+from src.training import train_model
+from src.evaluation import evaluate_model
 import torch.optim.lr_scheduler as lr_scheduler
 from sklearn.preprocessing import RobustScaler
 import shap
@@ -18,7 +18,7 @@ import shap
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load and preprocess data
-df = load_data("./data/houses.csv", "./data/apartments.csv")
+df = load_data("./data/raw/houses.csv", "./data/raw/apartments.csv")
 df = preprocess_data(df)
 
 # Define target and split data
@@ -31,13 +31,13 @@ imputer = KNNImputer(n_neighbors=5)
 impute_cols = ["state_of_building", "surface_of_the_plot", "nb_bedrooms", "living_area"]
 imputer.fit(X_train[impute_cols])
 
-joblib.dump(imputer, "knn_imputer.joblib")
+joblib.dump(imputer, "./artifacts/encoders/knn_imputer.joblib")
 
 
 new_num = ["surface_of_the_plot", "living_area", "nb_bedrooms"]
 
 scaler = RobustScaler().fit(X_train[new_num])
-joblib.dump(scaler, "numerical_scaler.joblib")
+joblib.dump(scaler, "./artifacts/encoders/numerical_scaler.joblib")
 X_train[new_num] = scaler.transform(X_train[new_num])
 X_test[new_num] = scaler.transform(X_test[new_num])
 
@@ -79,7 +79,7 @@ model = NeuralNetwork(
 optimizer = optim.AdamW(model.parameters(), lr=0.004, weight_decay=0.001)
 criterion = torch.nn.SmoothL1Loss()
 scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=10, factor=0.5)
-checkpoint_path = "best_model_checkpoint.pth"
+checkpoint_path = "./artifacts/checkpoints/best_model_checkpoint.pth"
 
 # Train Model
 train_model(
@@ -101,8 +101,10 @@ print(
     f"Final Test -> Loss: {loss:.4f}, MAE: {mae:.4f}, R²: {r2:.4f}, RMSE: {rmse:.4f}, MAPE: {mape:.4f}, sMAPE: {smape:.4f}"
 )
 
-district_encoder_mapping = joblib.load("district_encoder.joblib")
-property_sub_type_encode_mapping = joblib.load("property_sub_type.joblib")
+district_encoder_mapping = joblib.load("./artifacts/encoders/district_encoder.joblib")
+property_sub_type_encode_mapping = joblib.load(
+    "./artifacts/encoders/property_sub_type.joblib"
+)
 
 
 # SHAP Explanation

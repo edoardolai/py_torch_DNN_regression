@@ -1,4 +1,3 @@
-import json
 import joblib
 import pandas as pd
 import numpy as np
@@ -152,8 +151,13 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     df["property_sub_type_id"] = property_sub_type_encoder.fit_transform(
         df["property_sub_type"].astype(str)
     )
-    joblib.dump(district_encoder_mapping, "district_encoder.joblib")
-    joblib.dump(property_sub_type_encode_mapping, "property_sub_type.joblib")
+    joblib.dump(
+        district_encoder_mapping, "./artifacts/encoders/district_encoder.joblib"
+    )
+    joblib.dump(
+        property_sub_type_encode_mapping,
+        "./artifacts/encoders/property_sub_type.joblib",
+    )
 
     df.drop(
         [
