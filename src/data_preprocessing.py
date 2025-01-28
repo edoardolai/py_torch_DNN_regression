@@ -120,7 +120,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         "Just renovated",
         "As new",
     ]
-    df.to_csv("properties.csv")
+    df.to_csv("./data/processed/properties.csv")
 
     ordinal_encoder = OrdinalEncoder(categories=[states])
     state = df["state_of_building"]
